@@ -22,15 +22,21 @@ void LCD_Send(uint8_t * data, int length, int delay);
 uint8_t getColAddr(int col);
 uint8_t scanCol(uint8_t colAddr);
 int decodeRow(uint8_t row);
-//void SysTick_Handler(void);
+void SysTick_Handler(void);
+char * int2bin(int i);
 uint16_t ADC_To_Voltage(uint16_t adcOutput);
 
 int main()
 {
+
 	SYSTICK_InternalInit(100);
 	SYSTICK_IntCmd(ENABLE);
+	
 
-	display("Started");
+
+	
+
+	//display("main");
 	serial_init();
 	I2C_init();
 	LCD_init();
@@ -38,15 +44,19 @@ int main()
 	DAC();
 	display("\n\r");
 
+	
+
+	
+	//TextToLCD("Hello")
 	//keypad_init();
+
 }
-/*
 void SysTick_Handler(void) {
 	if (systickcounter % 1 == 0) {
+
 	}
 	systickcounter ++;
 }
-*/
 void DAC() {
 	DAC_Init(LPC_DAC);
 }
@@ -274,4 +284,20 @@ void delayTimer(int time) {
 	while (time > 0) {
 		time -= 1;
 	}
+}
+char * int2bin(int i)
+{
+    size_t bits = sizeof(int) * 4;// * CHAR_BIT;
+
+    char * str = malloc(bits + 1);
+	//char * str = 1;
+    if(!str) return NULL;
+    str[bits] = 0;
+
+    // type punning because signed shift is implementation-defined
+    unsigned u = *(unsigned *)&i;
+    for(; bits--; u >>= 1)
+        str[bits] = u & 1 ? '1' : '0';
+
+    return str;
 }
